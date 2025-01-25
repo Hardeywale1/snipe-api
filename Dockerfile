@@ -1,31 +1,32 @@
-# Use the official Golang image to create a build artifact.
-FROM golang:1.20-alpine as builder
+# Use the official Golang image as a parent image
+FROM golang:1.22 AS builder
 
-# Set the Current Working Directory inside the container
+# Set the working directory inside the container
 WORKDIR /app
 
 # Copy go mod and sum files
 COPY go.mod go.sum ./
 
-# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
+# Download all dependencies
 RUN go mod download
 
-# Copy the source from the current directory to the Working Directory inside the container
+# Copy the source code into the container
 COPY . .
 
-# Build the Go app
-RUN go build -o main .
+# Build the application
+RUN CGO_ENABLED=0 GOOS=linux go build -o main .
 
-# Start a new stage from scratch
+# Use a smaller base image for the final stage
 FROM alpine:latest
 
+# Set the working directory
 WORKDIR /root/
 
-# Copy the Pre-built binary file from the previous stage
+# Copy the binary from the builder stage
 COPY --from=builder /app/main .
 
-# Expose port 8080 to the outside world
+# Expose the port the app runs on
 EXPOSE 8080
 
-# Command to run the executable
+# Command to run the application
 CMD ["./main"]

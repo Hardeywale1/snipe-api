@@ -55,7 +55,7 @@ func sendTransactionalEmail(data EmailRequest) error {
 
 	payload := map[string]interface{}{
 		"email":           "admin@snipe-arbibot.com",
-		"transactionalId": "cm5ocv3bo00ky56e0x9dcnevr",
+		"transactionalId": "cm6brktgh00e0q60dym4n39c0",
 		"dataVariables": map[string]interface{}{
 			"codes": codes,
 		},
@@ -93,5 +93,5 @@ func main() {
 	r := gin.Default()
 	r.POST("/send-test-email", SendTestEmail())
 
-	r.Run(":8080")
+	r.Run("0.0.0.0:8080") // Changed from ":8080" to "0.0.0.0:8080"
 }
